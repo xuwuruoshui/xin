@@ -13,3 +13,17 @@
     - 监听ip(IP)
     - 监听端口(Port)
     - IP版本(IPVersion)
+- 简单的链接封装和业务绑定
+  - 方法
+    - 启动链接(Start)
+    - 停止链接(Stop)
+    - 获取当前链接的conn(TCPConnetion)
+    - 获取链接ID(ConnId)
+    - 得到客户端链接地址和端口(RemoteAddr)
+    - 发送数据的方法(Send)
+  - 属性
+    - socket TCP套接字(Conn)
+    - 链接ID(ConnID)
+    - 当前链接的状态是否已经关闭(isClosed)
+    - 与当前链接所绑定的处理业务方法(handleAPI)
+    - 等待链接被动退出的channel(ExitChan)

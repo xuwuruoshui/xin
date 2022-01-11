@@ -1,10 +1,10 @@
 package xnet
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"net"
-	"time"
 	"xin/xifs"
 )
 
@@ -20,9 +20,20 @@ type Server struct {
 	Port int
 }
 
+// 定义当前客户都链接的所绑定handle api(当前版本写死的回显,后续版本由用户自定义)
+func CallBackToClient(conn *net.TCPConn,data []byte,n int)error{
+	// 回显
+	log.Println("[Conn Handle] CallbackToClient ...")
+	if _,err := conn.Write(data[:n]);err!=nil{
+		log.Println("Write back data error:",err)
+		return errors.New("CallBackToClient")
+	}
+	return nil
+}
+
 // 启动
 func (s *Server) Start() {
-	fmt.Printf("[Start]Server Listener at IP:%s,Port %d, is starting\n", s.IP, s.Port)
+	log.Printf("[Start]Server Listener at IP:%s,Port %d, is starting\n", s.IP, s.Port)
 
 	go func() {
 		// 以下的API更底层一点
@@ -39,7 +50,8 @@ func (s *Server) Start() {
 			return
 		}
 
-		fmt.Printf("Start xin server success: %s is Listening", s.Name)
+		fmt.Printf("Start xin server success: %s is Listening\n", s.Name)
+		var cid uint32 = 0
 
 		// 3、阻塞等待客户端连接
 		for {
@@ -50,25 +62,12 @@ func (s *Server) Start() {
 				continue
 			}
 
-			// 已经与客户端建立连接，v1.0就实现一个512k回显业务
-			go func() {
-				for {
-					buf := make([]byte, 512)
-					c, err := conn.Read(buf)
-					if err != nil {
-						log.Println("Read err:", err)
-						time.Sleep(time.Second)
-						continue
-					}
-					log.Println(string(buf[:c]))
+			// 将处理新连接的业务方法和conn进行绑定 得到我们的链接模块
+			dealConn := NewConnetion(conn,cid,CallBackToClient)
+			cid++
 
-					// 回显
-					if _, err := conn.Write(buf[:c]); err != nil {
-						log.Println("Write err:", err)
-						continue
-					}
-				}
-			}()
+			// 启动当前的链接业务处理
+			go dealConn.Start()
 		}
 	}()
 
