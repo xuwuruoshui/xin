@@ -2,7 +2,9 @@ package xnet
 
 import (
 	"fmt"
+	"log"
 	"net"
+	"time"
 	"xin/xifs"
 )
 
@@ -54,13 +56,15 @@ func (s *Server) Start() {
 					buf := make([]byte, 512)
 					c, err := conn.Read(buf)
 					if err != nil {
-						fmt.Println("Read err:", err)
+						log.Println("Read err:", err)
+						time.Sleep(time.Second)
 						continue
 					}
+					log.Println(string(buf[:c]))
 
 					// 回显
 					if _, err := conn.Write(buf[:c]); err != nil {
-						fmt.Println("Write err:", err)
+						log.Println("Write err:", err)
 						continue
 					}
 				}
