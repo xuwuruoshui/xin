@@ -1,7 +1,6 @@
 package xnet
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"net"
@@ -18,17 +17,8 @@ type Server struct {
 	IP string
 	// 端口
 	Port int
-}
-
-// 定义当前客户都链接的所绑定handle api(当前版本写死的回显,后续版本由用户自定义)
-func CallBackToClient(conn *net.TCPConn,data []byte,n int)error{
-	// 回显
-	log.Println("[Conn Handle] CallbackToClient ...")
-	if _,err := conn.Write(data[:n]);err!=nil{
-		log.Println("Write back data error:",err)
-		return errors.New("CallBackToClient")
-	}
-	return nil
+	// 当前的Server添加一个router，server注册的链接对应的处理业务
+	Router xifs.XRouter
 }
 
 // 启动
@@ -63,7 +53,7 @@ func (s *Server) Start() {
 			}
 
 			// 将处理新连接的业务方法和conn进行绑定 得到我们的链接模块
-			dealConn := NewConnetion(conn,cid,CallBackToClient)
+			dealConn := NewConnetion(conn, cid, s.Router)
 			cid++
 
 			// 启动当前的链接业务处理
@@ -88,6 +78,11 @@ func (s *Server) Run() {
 	select {}
 }
 
+func (s *Server) AddRouter(router xifs.XRouter) {
+	s.Router = router
+	log.Println("AddRouter Success!!!")
+}
+
 func NewServer(name string) xifs.XServer {
-	return &Server{Name: name, IPVersion: "tcp4", IP: "0.0.0.0", Port: 9999}
+	return &Server{Name: name, IPVersion: "tcp4", IP: "0.0.0.0", Port: 9999, Router: nil}
 }
