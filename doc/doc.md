@@ -1,6 +1,6 @@
 # xin tcp框架设计
 
-- 基础server
+## 基础server
   - 方法
     - 启动服务器(Start)
       - 基本的服务器开发:1.创建addr 2.创建listen 3.处理客户端的基本业务(回显)
