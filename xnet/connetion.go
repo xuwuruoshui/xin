@@ -1,10 +1,10 @@
 package xnet
 
 import (
+	"github.com/xuwuruoshui/xin/config"
+	"github.com/xuwuruoshui/xin/xifs"
 	"log"
 	"net"
-	"xin/config"
-	"xin/xifs"
 )
 
 type Connection struct {

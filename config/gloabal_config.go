@@ -1,10 +1,10 @@
 package config
 
 import (
+	"github.com/xuwuruoshui/xin/xifs"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	"xin/xifs"
 )
 
 type GloabalConfig struct {

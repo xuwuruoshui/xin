@@ -1,6 +1,6 @@
 package xnet
 
-import "xin/xifs"
+import "github.com/xuwuruoshui/xin/xifs"
 
 type Request struct {
 	// 已经和客户端建立好的链接

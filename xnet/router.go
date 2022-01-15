@@ -1,6 +1,6 @@
 package xnet
 
-import "xin/xifs"
+import "github.com/xuwuruoshui/xin/xifs"
 
 // 实现XRouter时，可以先实现这个BaseRouter，然后根据自己的需求修改
 type BaseRouter struct {

@@ -1,6 +1,6 @@
 package main
 
-import "xin/xnet"
+import "github.com/xuwuruoshui/xin/xnet"
 
 func main() {
 	// 1、创建xin的server

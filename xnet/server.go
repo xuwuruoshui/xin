@@ -2,10 +2,10 @@ package xnet
 
 import (
 	"fmt"
+	"github.com/xuwuruoshui/xin/config"
+	"github.com/xuwuruoshui/xin/xifs"
 	"log"
 	"net"
-	"xin/config"
-	"xin/xifs"
 )
 
 // 实现XServer
