@@ -3,6 +3,7 @@ package xnet
 import (
 	"log"
 	"net"
+	"xin/config"
 	"xin/xifs"
 )
 
@@ -42,7 +43,7 @@ func (c *Connection) StartReader() {
 
 	for {
 		// 读取客户端的数据到buf中，最大512字节
-		data := make([]byte, 512)
+		data := make([]byte, config.GloabalConf.MaxPackageSize)
 		n, err := c.conn.Read(data)
 		if err != nil {
 			log.Println("recv data err:", err)

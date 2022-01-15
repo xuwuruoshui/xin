@@ -16,7 +16,7 @@ func main() {
 	}
 	// 2.conn调用write
 	for {
-		_, err := conn.Write([]byte("Hello Xin V0.3"))
+		_, err := conn.Write([]byte("Hello Xin V0.4"))
 		if err != nil {
 			log.Println("Write message error:", err)
 			return

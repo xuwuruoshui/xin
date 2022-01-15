@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"xin/config"
 	"xin/xifs"
 )
 
@@ -23,7 +24,9 @@ type Server struct {
 
 // 启动
 func (s *Server) Start() {
-	log.Printf("[Start]Server Listener at IP:%s,Port %d, is starting\n", s.IP, s.Port)
+	log.Printf("[Xin]Server Listener at Name:%s,Version %s.\n", config.GloabalConf.Name, config.GloabalConf.Version)
+	log.Printf("[Xin]Server Listener at IP:%s,Port %d, is starting\n", config.GloabalConf.Host, config.GloabalConf.Port)
+	log.Printf("[Xin]Server Listener at MaxConn:%d,MaxPackageSize %d, is starting\n", config.GloabalConf.MaxConn, config.GloabalConf.MaxPackageSize)
 
 	go func() {
 		// 以下的API更底层一点
@@ -83,6 +86,11 @@ func (s *Server) AddRouter(router xifs.XRouter) {
 	log.Println("AddRouter Success!!!")
 }
 
-func NewServer(name string) xifs.XServer {
-	return &Server{Name: name, IPVersion: "tcp4", IP: "0.0.0.0", Port: 9999, Router: nil}
+func NewServer() xifs.XServer {
+	return &Server{
+		Name:      config.GloabalConf.Name,
+		IPVersion: "tcp4",
+		IP:        config.GloabalConf.Host,
+		Port:      config.GloabalConf.Port,
+		Router:    nil}
 }
