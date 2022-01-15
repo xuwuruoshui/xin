@@ -1,4 +1,4 @@
-module xin
+module github.com/xuwuruoshui/xin
 
 go 1.17
 
