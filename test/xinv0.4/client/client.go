@@ -9,7 +9,7 @@ import (
 func main() {
 
 	// 1.链接远程服务器，得到conn
-	conn, err := net.Dial("tcp", ":9999")
+	conn, err := net.Dial("tcp", ":7777")
 	if err != nil {
 		log.Println("Client start error:", err)
 		return
