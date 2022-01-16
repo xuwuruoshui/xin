@@ -58,3 +58,8 @@
   2. 创建Server
   3. 添加实现的路由
   4. 启动
+## 全局配置
+- 通过yaml进行配置
+- 创建一个global_config结构体,读取yaml配置
+- 替换xin中的配置
+- 打包到github
