@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/xuwuruoshui/xin/xifs"
+	"github.com/xuwuruoshui/xin/xnet"
 	"log"
-	"xin/xifs"
-	"xin/xnet"
 )
 
 // 实现XRouter时，可以先实现这个BaseRouter，然后根据自己的需求修改
