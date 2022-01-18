@@ -1,7 +1,7 @@
 package xnet
 
 import (
-	"github.com/xuwuruoshui/xin/config"
+	"errors"
 	"github.com/xuwuruoshui/xin/xifs"
 	"log"
 	"net"
@@ -42,18 +42,32 @@ func (c *Connection) StartReader() {
 	defer c.Stop()
 
 	for {
-		// 读取客户端的数据到buf中，最大512字节
-		data := make([]byte, config.GloabalConf.MaxPackageSize)
-		n, err := c.conn.Read(data)
-		if err != nil {
-			log.Println("recv data err:", err)
-			continue
+		// 创建一个datapack对象
+		datapack := NewDataPack()
+		headData := make([]byte, datapack.GetHeadLen())
+
+		if _, err := c.conn.Read(headData); err != nil {
+			log.Println("read headLen error:", err)
+			break
 		}
-		log.Println(string(data[:n]))
+
+		msg, err := datapack.Unpack(headData)
+		if err != nil {
+			log.Println("Unpack data error:", err)
+			break
+		}
+
+		if msg.GetLength() > 0 {
+			msg.SetData(make([]byte, msg.GetLength()))
+			if _, err = c.conn.Read(msg.GetData()); err != nil {
+				log.Println("read Data error:", err)
+				break
+			}
+		}
 
 		req := Request{
 			conn: c,
-			data: data,
+			msg:  msg,
 		}
 
 		// 从路由中，找到注册绑定的Conn对应的router调用
@@ -64,6 +78,28 @@ func (c *Connection) StartReader() {
 		}(&req)
 
 	}
+}
+
+// 发送数据到远程客户端
+func (c *Connection) SendMsg(msgId uint32, data []byte) error {
+	if c.isClosed {
+		return errors.New("Connection is closed when send msg !!!")
+	}
+	// 封包
+	msg := NewMessage(msgId, data)
+	datapack := NewDataPack()
+	packData, err := datapack.Pack(msg)
+
+	if err != nil {
+		log.Println("pack data error:", err)
+		return err
+	}
+
+	if _, err = c.conn.Write(packData); err != nil {
+		log.Println("write data error:", err)
+		return err
+	}
+	return nil
 }
 
 // 启动链接 让当前的链接准备开始工作
@@ -104,9 +140,4 @@ func (c *Connection) ConnId() uint32 {
 // 获取远程客户端的TCP状态 IP port
 func (c *Connection) RemoteAddr() net.Addr {
 	return c.conn.RemoteAddr()
-}
-
-// 发送数据，将数据发送给远程的客户端
-func (c *Connection) Send(data []byte) error {
-	return nil
 }

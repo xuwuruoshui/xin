@@ -63,3 +63,22 @@
 - 创建一个global_config结构体,读取yaml配置
 - 替换xin中的配置
 - 打包到github
+
+## 消息封装
+- 定义一个消息结构体(Message)
+  - 属性
+    - 消息ID
+    - 消息长度
+    - 消息内容
+- 定义一个解决TCP粘包问题的封包拆包的模块
+  - 针对Message进行TLV(type(id)、lenght、value)格式的封装(Pack)
+    - 写消息长度
+    - 写消息ID
+    - 写消息内容
+  - 针对Message进行TLV格式的拆包(UnPack)
+    - 先读取固定长度的head->消息内容的长度和消息类型
+    - 再根据消息内容的长度,再进行一次读写,从conn中读取消息内容
+- 集成消息封装到Xin中
+  - 将Message添加到Request中
+  - 修改链接的读取机制,把单纯的读取byte改成拆包
+  - 给Connection提供一个发包机制:将发送的消息封包后发送
