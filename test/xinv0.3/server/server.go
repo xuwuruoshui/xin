@@ -8,6 +8,7 @@ import (
 
 // 实现XRouter时，可以先实现这个BaseRouter，然后根据自己的需求修改
 type PingRouter struct {
+	xnet.BaseRouter
 }
 
 // 处理之前的方法
@@ -39,7 +40,7 @@ func (p *PingRouter) PostHandle(req xifs.XRequest) {
 
 func main() {
 	// 1、创建xin的server
-	s := xnet.NewServer("[xin V0.3]")
+	s := xnet.NewServer()
 
 	// 2、给当前zinx框架添加一个自定义的router
 	s.AddRouter(&PingRouter{})
