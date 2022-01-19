@@ -18,7 +18,23 @@ func (p *PingRouter) Handle(req xifs.XRequest) {
 	// 先读取客户端数据，再回写ping...
 	log.Printf("Recv from clien:msgId=%d,data=%s\n", req.MsgId(), req.Data())
 
-	if err := req.Connection().SendMsg(req.MsgId(), []byte("XinV0.5 server ping...")); err != nil {
+	if err := req.Connection().SendMsg(req.MsgId(), []byte("XinV0.6 server ping...")); err != nil {
+		log.Println("send msg error:", err)
+	}
+}
+
+type HelloRouter struct {
+	xnet.BaseRouter
+}
+
+// 处理主方法
+func (h *HelloRouter) Handle(req xifs.XRequest) {
+	log.Println("Call Router Handle")
+
+	// 先读取客户端数据，再回写ping...
+	log.Printf("Recv from clien:msgId=%d,data=%s\n", req.MsgId(), req.Data())
+
+	if err := req.Connection().SendMsg(req.MsgId(), []byte("XinV0.6 server Hello...")); err != nil {
 		log.Println("send msg error:", err)
 	}
 }
@@ -28,7 +44,9 @@ func main() {
 	s := xnet.NewServer()
 
 	// 2、给当前zinx框架添加一个自定义的router
-	s.AddRouter(&PingRouter{})
-	// 2、启动xin的server
+	s.AddRouter(1, &PingRouter{})
+	s.AddRouter(2, &HelloRouter{})
+
+	// 3、启动xin的server
 	s.Run()
 }

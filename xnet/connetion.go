@@ -21,17 +21,17 @@ type Connection struct {
 	exitChan chan bool
 
 	// 该链接处理的方法Router
-	router xifs.XRouter
+	msgHandler xifs.XMessageHandle
 }
 
 // 初始化链接模块的方法
-func NewConnetion(conn *net.TCPConn, connID uint32, router xifs.XRouter) *Connection {
+func NewConnetion(conn *net.TCPConn, connID uint32, msgHandler xifs.XMessageHandle) *Connection {
 	return &Connection{
-		conn:     conn,
-		connID:   connID,
-		router:   router,
-		isClosed: false,
-		exitChan: make(chan bool, 1),
+		conn:       conn,
+		connID:     connID,
+		msgHandler: msgHandler,
+		isClosed:   false,
+		exitChan:   make(chan bool, 1),
 	}
 }
 
@@ -71,11 +71,7 @@ func (c *Connection) StartReader() {
 		}
 
 		// 从路由中，找到注册绑定的Conn对应的router调用
-		go func(request xifs.XRequest) {
-			c.router.PreHandle(request)
-			c.router.Handle(request)
-			c.router.PostHandle(request)
-		}(&req)
+		go c.msgHandler.DoMsgHandle(&req)
 
 	}
 }

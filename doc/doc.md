@@ -82,3 +82,14 @@
   - 将Message添加到Request中
   - 修改链接的读取机制,把单纯的读取byte改成拆包
   - 给Connection提供一个发包机制:将发送的消息封包后发送
+
+## 多路由模式
+- 消息管理模块(支持多路由业务api调度管理)(MessageHandler)
+  - 属性
+    - 集合-消息ID和对应的router的关系-map
+  - 方法
+    - 根据msgID来索引调度路由方法(DoMsgHandle)
+    - 添加路由方法到map集合中(AddRouter)
+- 消息管理模块集成到Xin中
+  - 将server模块中的Router换成MessageHandler
+  - 将connection模块中的Router换成MessageHandler

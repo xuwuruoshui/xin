@@ -18,8 +18,8 @@ type Server struct {
 	IP string
 	// 端口
 	Port int
-	// 当前的Server添加一个router，server注册的链接对应的处理业务
-	Router xifs.XRouter
+	// 当前的Server添加一个MessageHandler,用于msgId和router的绑定
+	msgHandler xifs.XMessageHandle
 }
 
 // 启动
@@ -56,7 +56,7 @@ func (s *Server) Start() {
 			}
 
 			// 将处理新连接的业务方法和conn进行绑定 得到我们的链接模块
-			dealConn := NewConnetion(conn, cid, s.Router)
+			dealConn := NewConnetion(conn, cid, s.msgHandler)
 			cid++
 
 			// 启动当前的链接业务处理
@@ -81,16 +81,16 @@ func (s *Server) Run() {
 	select {}
 }
 
-func (s *Server) AddRouter(router xifs.XRouter) {
-	s.Router = router
+func (s *Server) AddRouter(msgId uint32, router xifs.XRouter) {
+	s.msgHandler.AddRouter(msgId, router)
 	log.Println("AddRouter Success!!!")
 }
 
 func NewServer() xifs.XServer {
 	return &Server{
-		Name:      config.GloabalConf.Name,
-		IPVersion: "tcp4",
-		IP:        config.GloabalConf.Host,
-		Port:      config.GloabalConf.Port,
-		Router:    nil}
+		Name:       config.GloabalConf.Name,
+		IPVersion:  "tcp4",
+		IP:         config.GloabalConf.Host,
+		Port:       config.GloabalConf.Port,
+		msgHandler: NewMsgHandle()}
 }

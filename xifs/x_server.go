@@ -11,6 +11,6 @@ type XServer interface {
 	// 运行服务器
 	Run()
 
-	// 路由功能：给当前的服务注册一个路由方法，供客户端的链接处理使用
-	AddRouter(router XRouter)
+	// 当前的Server添加一个MessageHandler,用于msgId和router的绑定
+	AddRouter(msgId uint32, router XRouter)
 }
