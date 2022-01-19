@@ -93,3 +93,8 @@
 - 消息管理模块集成到Xin中
   - 将server模块中的Router换成MessageHandler
   - 将connection模块中的Router换成MessageHandler
+
+## 读写分离
+- 添加一个Reader和Writer之间通信的channel
+- 添加一个Writer Goroutine,数据写入channel
+- 添加一个Reader Goroutine,从channel中读

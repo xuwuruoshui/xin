@@ -20,6 +20,9 @@ type Connection struct {
 	// 告知当前连接已经退出的/停止 channel
 	exitChan chan bool
 
+	// 用于Read、Write的channel(无缓冲)
+	msgChan chan []byte
+
 	// 该链接处理的方法Router
 	msgHandler xifs.XMessageHandle
 }
@@ -31,14 +34,15 @@ func NewConnetion(conn *net.TCPConn, connID uint32, msgHandler xifs.XMessageHand
 		connID:     connID,
 		msgHandler: msgHandler,
 		isClosed:   false,
+		msgChan:    make(chan []byte),
 		exitChan:   make(chan bool, 1),
 	}
 }
 
 // 读业务
 func (c *Connection) StartReader() {
-	log.Println("Reader Goroutine is running...")
-	defer log.Println("connID=", c.connID, "Reader is exit,remote addr is", c.RemoteAddr().String())
+	log.Println("[Reader Goroutine is running]...")
+	defer log.Printf("[Reader is exit,remote addr is %s],connID=%d\n", c.RemoteAddr().String(), c.connID)
 	defer c.Stop()
 
 	for {
@@ -76,6 +80,27 @@ func (c *Connection) StartReader() {
 	}
 }
 
+// 写业务
+func (c *Connection) StartWrite() {
+	log.Println("[Writer Gorutine is running]...")
+	defer log.Printf("%s Writer exit!!!", c.RemoteAddr())
+
+	for {
+		select {
+		case data := <-c.msgChan:
+			// 有数据要写给客户端
+			if _, err := c.conn.Write(data); err != nil {
+				log.Printf("Send data error%s,conn writer exit!!!", err)
+				return
+			}
+		case <-c.exitChan:
+			// Reader结束,Writer也退出
+			return
+
+		}
+	}
+}
+
 // 发送数据到远程客户端
 func (c *Connection) SendMsg(msgId uint32, data []byte) error {
 	if c.isClosed {
@@ -91,10 +116,8 @@ func (c *Connection) SendMsg(msgId uint32, data []byte) error {
 		return err
 	}
 
-	if _, err = c.conn.Write(packData); err != nil {
-		log.Println("write data error:", err)
-		return err
-	}
+	// 数据发送到channel
+	c.msgChan <- packData
 	return nil
 }
 
@@ -103,7 +126,8 @@ func (c *Connection) Start() {
 	log.Println("conn Start() ... connID=", c.connID)
 	// 启动从当前链接
 	// TODO 启动从当前链接写数据的业务
-	c.StartReader()
+	go c.StartReader()
+	go c.StartWrite()
 }
 
 // 停止链接	结束当前连接的工作
@@ -119,8 +143,12 @@ func (c *Connection) Stop() {
 	// 关闭链接
 	c.conn.Close()
 
+	// 告知writer关闭
+	c.exitChan <- true
+
 	// 回收资源
 	close(c.exitChan)
+	close(c.msgChan)
 }
 
 // 获取当前链接的绑定 socket conn

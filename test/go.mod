@@ -1,4 +1,4 @@
-module testv0.6
+module testv0.7
 
 go 1.17
 
