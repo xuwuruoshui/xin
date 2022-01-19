@@ -96,5 +96,5 @@
 
 ## 读写分离
 - 添加一个Reader和Writer之间通信的channel
-- 添加一个Writer Goroutine,数据写入channel
-- 添加一个Reader Goroutine,从channel中读
+- 添加一个Reader Goroutine,读到数据后写入channel
+- 添加一个Writer Goroutine,感知到channel中有数据后写回客户端
