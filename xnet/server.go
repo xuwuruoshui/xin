@@ -29,7 +29,9 @@ func (s *Server) Start() {
 	log.Printf("[Xin]Server Listener at MaxConn:%d,MaxPackageSize %d, is starting\n", config.GloabalConf.MaxConn, config.GloabalConf.MaxPackageSize)
 
 	go func() {
-		// 以下的API更底层一点
+		//0、开启消息队列及Worker工作池
+		s.msgHandler.StartWorkerPool()
+
 		// 1、获取一个TCP的Address
 		addr, err := net.ResolveTCPAddr(s.IPVersion, fmt.Sprintf("%s:%d", s.IP, s.Port))
 		if err != nil {

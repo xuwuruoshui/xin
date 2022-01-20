@@ -2,6 +2,7 @@ package xnet
 
 import (
 	"errors"
+	"github.com/xuwuruoshui/xin/config"
 	"github.com/xuwuruoshui/xin/xifs"
 	"log"
 	"net"
@@ -74,8 +75,14 @@ func (c *Connection) StartReader() {
 			msg:  msg,
 		}
 
-		// 从路由中，找到注册绑定的Conn对应的router调用
-		go c.msgHandler.DoMsgHandle(&req)
+		if config.GloabalConf.WorkerPoolSize > 0 {
+			// 已经开启了工作池，将消息发送给工作池
+			c.msgHandler.SendMsgToTaskQueue(&req)
+
+		} else {
+			// 从路由中，找到注册绑定的Conn对应的router调用
+			go c.msgHandler.DoMsgHandle(&req)
+		}
 
 	}
 }

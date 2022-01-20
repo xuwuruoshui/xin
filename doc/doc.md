@@ -98,3 +98,21 @@
 - 添加一个Reader和Writer之间通信的channel
 - 添加一个Reader Goroutine,读到数据后写入channel
 - 添加一个Writer Goroutine,感知到channel中有数据后写回客户端
+
+## 消息队列及多任务
+- 创建一个消息队列
+  - MessageHandler消息管理模块
+    - 添加消息队列(TaskQueue)
+    - worker池的数量(GloableConfig中获取)(WorkerPoolSize)
+- 创建多任务worker的工作池并且启动
+  - 根据workerPoolSize创建Worker
+  - 每个worker都用一个Channel和Goroutine去承载(StartWorkerPool)
+    - 阻塞等待与当前worker对应的Channel的消息
+    - 一旦有消息到来，worker应该处理当前消息对应的业务，调用DoMsgHandler()
+- 将之前的发送消息，全部改成把消息发送到消息队列和worker工作池来处理
+  - 定义一个方法，将消息发送给消息队列工作池的方法(SendMsgToTaskQueue)
+    - 保证每个worker所收到request任务是均衡,轮询接收
+    - 将消息发送给对应的channel
+- Xin中使用
+  - 开启并调用消息队列及worker工作池
+  - 客户端传来的消息，交由worker工作池处理
