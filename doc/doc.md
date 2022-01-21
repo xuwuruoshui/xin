@@ -140,3 +140,14 @@
     - 当server停止的时候,清除所有ConnectionMgr中的Connection
 
 - 给Xin提供Hook钩子函数
+  - 添加属性
+    - Server创建Connection之后自动调用Hook函数(OnConnStart)
+    - Server销毁Connection之后自动调用Hook函数(OnConnStop)
+  - 添加方法
+    - 注册OnConnStart方法(SetOnConnStart)
+    - 注册OnConnStop方法(SetOnConnStop)
+    - 调用OnConnStop方法(CallOnConnStart)
+    - 调用OnConnStop方法(CallOnConnStop)
+  - 调用时机
+    - CallOnConnStart在Connection中的Start()调用
+    - CallOnConnStart在Connection中的Stop()调用

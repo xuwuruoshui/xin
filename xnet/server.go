@@ -22,6 +22,10 @@ type Server struct {
 	msgHandler xifs.XMessageHandle
 	//连接管理器
 	ConnMgr xifs.XConnectionManager
+	// Server创建Connection之后自动调用Hook函数(OnConnStart)
+	OnConnStart func(conn xifs.XConnection)
+	// Server销毁Connection之后自动调用Hook函数(OnConnStop)
+	OnConnStop func(conn xifs.XConnection)
 }
 
 // 启动
@@ -112,4 +116,30 @@ func NewServer() xifs.XServer {
 // 获取连接管理器
 func (s *Server) GetConnMgr() xifs.XConnectionManager {
 	return s.ConnMgr
+}
+
+// 注册OnConnStart方法
+func (s *Server) SetOnConnStart(hook func(conn xifs.XConnection)) {
+	s.OnConnStart = hook
+}
+
+// 注册OnConnStop方法
+func (s *Server) SetOnConnStop(hook func(conn xifs.XConnection)) {
+	s.OnConnStop = hook
+}
+
+// 注册OnConnStart方法
+func (s *Server) CallOnConnStart(conn xifs.XConnection) {
+	if s.OnConnStart != nil {
+		log.Printf("Call OnConnStart")
+		s.OnConnStart(conn)
+	}
+}
+
+// 注册OnConnStop方法
+func (s *Server) CallOnConnStop(conn xifs.XConnection) {
+	if s.OnConnStop != nil {
+		log.Printf("Call OnConnStart")
+		s.OnConnStop(conn)
+	}
 }
