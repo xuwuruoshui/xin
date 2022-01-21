@@ -9,6 +9,10 @@ import (
 )
 
 type Connection struct {
+
+	// 当前Conn与哪个server相关联
+	TcpServer xifs.XServer
+
 	// 当前连接的socket: TCP套接字
 	conn *net.TCPConn
 
@@ -29,8 +33,10 @@ type Connection struct {
 }
 
 // 初始化链接模块的方法
-func NewConnetion(conn *net.TCPConn, connID uint32, msgHandler xifs.XMessageHandle) *Connection {
-	return &Connection{
+func NewConnetion(server xifs.XServer, conn *net.TCPConn, connID uint32, msgHandler xifs.XMessageHandle) *Connection {
+
+	c := &Connection{
+		TcpServer:  server,
 		conn:       conn,
 		connID:     connID,
 		msgHandler: msgHandler,
@@ -38,6 +44,9 @@ func NewConnetion(conn *net.TCPConn, connID uint32, msgHandler xifs.XMessageHand
 		msgChan:    make(chan []byte),
 		exitChan:   make(chan bool, 1),
 	}
+	// 将当前链接添加到链接管理器ConnectionManager
+	c.TcpServer.GetConnMgr().Add(c)
+	return c
 }
 
 // 读业务
@@ -153,6 +162,8 @@ func (c *Connection) Stop() {
 	// 告知writer关闭
 	c.exitChan <- true
 
+	// 将当前链接从Connection Manager中删除
+	c.TcpServer.GetConnMgr().Remove(c)
 	// 回收资源
 	close(c.exitChan)
 	close(c.msgChan)

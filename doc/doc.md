@@ -116,3 +116,27 @@
 - Xin中使用
   - 开启并调用消息队列及worker工作池
   - 客户端传来的消息，交由worker工作池处理
+
+## 链接管理
+- 创建一个链接管理模块
+  - 属性
+    - Connection的map
+    - map的锁
+  - 方法
+    - 添加链接(Add)
+    - 删除连接(Remove)
+    - 根据连接ID查找对应的连接(Get)
+    - 总连接个数(Len)
+    - 清理全部的连接(ClearConn)
+- 将链接管理模块集成到Xin中
+  - 将ConnectionManager加入Server模块中
+    - 给server添加一个ConnectionMgr
+    - 修改NewServer方法 加入ConnMgr初始化
+    - 判断当前的连接数量是否已经超出最大值MaxConn
+  - 每次成功与客户端建立连接后-添加ConnectionManager
+    - 在NewConnection的时候将新conn加入ConnectionManager.Connection加入Server属性，Server提供一个GetConnMgr的方法
+  - 每次客户端连接断开后，将连接从ConnectionManger中删除
+    - 在Conn.Stop方法中，将当前的链接从ConnMgr删除即可
+    - 当server停止的时候,清除所有ConnectionMgr中的Connection
+
+- 给Xin提供Hook钩子函数

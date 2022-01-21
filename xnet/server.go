@@ -20,6 +20,8 @@ type Server struct {
 	Port int
 	// 当前的Server添加一个MessageHandler,用于msgId和router的绑定
 	msgHandler xifs.XMessageHandle
+	//连接管理器
+	ConnMgr xifs.XConnectionManager
 }
 
 // 启动
@@ -57,8 +59,15 @@ func (s *Server) Start() {
 				continue
 			}
 
+			//判断是否超过最大连接
+			if s.ConnMgr.Len() >= config.GloabalConf.MaxConn {
+				//TODO 给客户端一个超出最大连接的错误包
+				log.Printf("The connection has reached the maximum value, value=%d\n", s.ConnMgr.Len())
+				conn.Close()
+				continue
+			}
 			// 将处理新连接的业务方法和conn进行绑定 得到我们的链接模块
-			dealConn := NewConnetion(conn, cid, s.msgHandler)
+			dealConn := NewConnetion(s, conn, cid, s.msgHandler)
 			cid++
 
 			// 启动当前的链接业务处理
@@ -71,6 +80,8 @@ func (s *Server) Start() {
 // 停止
 func (s *Server) Stop() {
 	// TODO 将一些服务器的资源、状态或一些开辟的链接信息进行停止或者回收
+	log.Printf("Stop Xin server name%s!!!", s.Name)
+	s.ConnMgr.ClearConn()
 }
 
 // 运行
@@ -94,5 +105,11 @@ func NewServer() xifs.XServer {
 		IPVersion:  "tcp4",
 		IP:         config.GloabalConf.Host,
 		Port:       config.GloabalConf.Port,
-		msgHandler: NewMsgHandle()}
+		msgHandler: NewMsgHandle(),
+		ConnMgr:    NewConnectionManager()}
+}
+
+// 获取连接管理器
+func (s *Server) GetConnMgr() xifs.XConnectionManager {
+	return s.ConnMgr
 }

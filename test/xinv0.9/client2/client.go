@@ -20,7 +20,7 @@ func main() {
 		datapack := xnet.NewDataPack()
 
 		// 1.发送消息
-		msg := xnet.NewMessage(2, []byte("Xin V0.8 client Test message!!!"))
+		msg := xnet.NewMessage(2, []byte("Xin V0.9 client Test message!!!"))
 		packData, err := datapack.Pack(msg)
 		if err != nil {
 			log.Println("pack data error:", err)

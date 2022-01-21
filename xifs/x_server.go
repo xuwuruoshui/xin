@@ -13,4 +13,6 @@ type XServer interface {
 
 	// 当前的Server添加一个MessageHandler,用于msgId和router的绑定
 	AddRouter(msgId uint32, router XRouter)
+
+	GetConnMgr() XConnectionManager
 }
