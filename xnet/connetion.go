@@ -6,6 +6,7 @@ import (
 	"github.com/xuwuruoshui/xin/xifs"
 	"log"
 	"net"
+	"sync"
 )
 
 type Connection struct {
@@ -30,6 +31,12 @@ type Connection struct {
 
 	// 该链接处理的方法Router
 	msgHandler xifs.XMessageHandle
+
+	// 链接属性集合
+	property map[string]interface{}
+
+	// 保护链接属性的锁
+	propertyLock sync.RWMutex
 }
 
 // 初始化链接模块的方法
@@ -43,6 +50,7 @@ func NewConnetion(server xifs.XServer, conn *net.TCPConn, connID uint32, msgHand
 		isClosed:   false,
 		msgChan:    make(chan []byte),
 		exitChan:   make(chan bool, 1),
+		property:   make(map[string]interface{}),
 	}
 	// 将当前链接添加到链接管理器ConnectionManager
 	c.TcpServer.GetConnMgr().Add(c)
@@ -189,4 +197,32 @@ func (c *Connection) ConnId() uint32 {
 // 获取远程客户端的TCP状态 IP port
 func (c *Connection) RemoteAddr() net.Addr {
 	return c.conn.RemoteAddr()
+}
+
+// 设置链接属性
+func (c *Connection) SetProperty(key string, value interface{}) {
+	c.propertyLock.Lock()
+	defer c.propertyLock.Unlock()
+
+	// 添加一个链接属性
+	c.property[key] = value
+}
+
+// 获取链接属性
+func (c *Connection) GetProperty(key string) (interface{}, error) {
+	c.propertyLock.RLock()
+	defer c.propertyLock.RUnlock()
+
+	// 读取属性
+	if value, ok := c.property[key]; ok {
+		return value, nil
+	}
+	return nil, errors.New("Property not found!!!")
+}
+
+// 移除链接属性
+func (c *Connection) RemoveProperty(key string) {
+	c.propertyLock.Lock()
+	defer c.propertyLock.Unlock()
+	delete(c.property, key)
 }

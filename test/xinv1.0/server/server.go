@@ -46,12 +46,24 @@ func afterConnection(conn xifs.XConnection) {
 	if err != nil {
 		log.Println(err)
 	}
+	log.Println("Set conn Property...")
+	conn.SetProperty("Name", "xuwuruoshui")
+	conn.SetProperty("Github", "https://github.com/xuwuruoshui")
 }
 
 // 销毁链接之前的钩子函数
 func beforeStop(conn xifs.XConnection) {
 	log.Println("BeforeStop is Called...")
 	log.Printf("conn Id=%d is Lost...", conn.ConnId())
+
+	//获取链接属性
+	if name, err := conn.GetProperty("Name"); err == nil {
+		log.Printf("Name:%s\n", name)
+	}
+	if github, err := conn.GetProperty("Github"); err == nil {
+		log.Printf("Github:%s\n", github)
+	}
+
 }
 
 func main() {

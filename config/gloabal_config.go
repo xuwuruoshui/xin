@@ -30,7 +30,7 @@ func init() {
 	// 默认值
 	GloabalConf = &GloabalConfig{
 		Name:              "Xin Server",
-		Version:           "V0.9",
+		Version:           "V1.0",
 		Port:              9998,
 		Host:              "0.0.0.0",
 		MaxConn:           1000,

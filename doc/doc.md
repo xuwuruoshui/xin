@@ -151,3 +151,13 @@
   - 调用时机
     - CallOnConnStart在Connection中的Start()调用
     - CallOnConnStart在Connection中的Stop()调用
+
+- 链接属性配置
+  - 给Connection模块添加可配置属性功能
+    - 新增属性
+      - 链接属性集合(property)
+      - 保护链接属性的锁(propertyLock)
+    - 新增方法
+      - 设置链接属性(SetProperty)
+      - 获取链接属性(GetProperty)
+      - 移除链接属性(RemoveProperty)
