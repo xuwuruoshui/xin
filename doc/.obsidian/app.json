@@ -1,1 +1,8 @@
-{}
+{
+  "promptDelete": false,
+  "showUnsupportedFiles": false,
+  "useMarkdownLinks": true,
+  "alwaysUpdateLinks": true,
+  "attachmentFolderPath": "/",
+  "newLinkFormat": "relative"
+}

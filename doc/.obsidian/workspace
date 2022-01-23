@@ -1,29 +1,32 @@
 {
   "main": {
-    "id": "fb2cb94e464bdbed",
+    "id": "3b68f54394ab9865",
     "type": "split",
     "children": [
       {
-        "id": "c584e412f79cfff9",
+        "id": "ea9d56ba1b1622fd",
         "type": "leaf",
         "state": {
-          "type": "empty",
-          "state": {}
+          "type": "markdown",
+          "state": {
+            "file": "doc.md",
+            "mode": "source"
+          }
         }
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "196564059e9f01a8",
+    "id": "e5189c96d53629c6",
     "type": "split",
     "children": [
       {
-        "id": "41244e1ea6d839d5",
+        "id": "a6b0ce598416dcb4",
         "type": "tabs",
         "children": [
           {
-            "id": "131330da2b4efbfb",
+            "id": "899b3ade7f96da16",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -31,7 +34,7 @@
             }
           },
           {
-            "id": "4d4957a4dc85969a",
+            "id": "7785cb914e863520",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -49,22 +52,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 396
   },
   "right": {
-    "id": "771ca74d4068c523",
+    "id": "3ca05c5b3c1e381e",
     "type": "split",
     "children": [
       {
-        "id": "49af213c47a13087",
+        "id": "e4850549fca9d8ae",
         "type": "tabs",
         "children": [
           {
-            "id": "582699d7ae24edf2",
+            "id": "ba902f503d5dd784",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "doc.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -72,6 +76,16 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "bd637a38900e9730",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "doc.md"
               }
             }
           }
@@ -82,6 +96,17 @@
     "width": 300,
     "collapsed": true
   },
-  "active": "c584e412f79cfff9",
-  "lastOpenFiles": []
+  "active": "ea9d56ba1b1622fd",
+  "lastOpenFiles": [
+    "doc.md",
+    "未命名思维导图.md",
+    "3.生命周期.md",
+    "mid.md",
+    "img/aa.png",
+    "1. 文件结构.md",
+    "2. 启动参数.md",
+    "img/bb.png",
+    "Pasted image 20211228205601.png",
+    "Pasted image 20220104143713.png"
+  ]
 }

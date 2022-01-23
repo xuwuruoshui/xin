@@ -1,3 +1,6 @@
+---
+mindmap-plugin: basic
+---
 # xin tcp框架设计
 
 - 基础server

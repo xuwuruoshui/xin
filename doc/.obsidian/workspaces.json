@@ -1,0 +1,105 @@
+{
+  "workspaces": {
+    "my_work": {
+      "main": {
+        "id": "3b68f54394ab9865",
+        "type": "split",
+        "children": [
+          {
+            "id": "948633e4122be601",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "2. 启动参数.md",
+                "mode": "source"
+              }
+            }
+          }
+        ],
+        "direction": "vertical"
+      },
+      "left": {
+        "id": "e5189c96d53629c6",
+        "type": "split",
+        "children": [
+          {
+            "id": "a6b0ce598416dcb4",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "899b3ade7f96da16",
+                "type": "leaf",
+                "state": {
+                  "type": "file-explorer",
+                  "state": {}
+                }
+              },
+              {
+                "id": "7785cb914e863520",
+                "type": "leaf",
+                "state": {
+                  "type": "search",
+                  "state": {
+                    "query": "",
+                    "matchingCase": false,
+                    "explainSearch": false,
+                    "collapseAll": false,
+                    "extraContext": false,
+                    "sortOrder": "alphabetical"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "horizontal",
+        "width": 396
+      },
+      "right": {
+        "id": "3ca05c5b3c1e381e",
+        "type": "split",
+        "children": [
+          {
+            "id": "e4850549fca9d8ae",
+            "type": "tabs",
+            "children": [
+              {
+                "id": "ba902f503d5dd784",
+                "type": "leaf",
+                "state": {
+                  "type": "backlink",
+                  "state": {
+                    "file": "2. 启动参数.md",
+                    "collapseAll": false,
+                    "extraContext": false,
+                    "sortOrder": "alphabetical",
+                    "showSearch": false,
+                    "searchQuery": "",
+                    "backlinkCollapsed": false,
+                    "unlinkedCollapsed": true
+                  }
+                }
+              },
+              {
+                "id": "bd637a38900e9730",
+                "type": "leaf",
+                "state": {
+                  "type": "outline",
+                  "state": {
+                    "file": "2. 启动参数.md"
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "direction": "horizontal",
+        "width": 300,
+        "collapsed": true
+      },
+      "active": "948633e4122be601"
+    }
+  },
+  "active": "my_work"
+}
