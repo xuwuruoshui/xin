@@ -3,4 +3,5 @@ port: 7777
 name: "xin"
 version: "v1.0"
 maxConn: 3
+maxPackageSize: 1024
 workerPoolSize: 5
