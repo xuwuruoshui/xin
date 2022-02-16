@@ -75,7 +75,7 @@ func (m *MessageHandle) StartWorkflow(workerId int, taskQueue chan xifs.XRequest
 
 // 将消息交给TaskQueue,由Worker进行处理
 func (m *MessageHandle) SendMsgToTaskQueue(request xifs.XRequest) {
-	// 1、将消息平均分配给不通过worker
+	// 1、将消息平均分配给不同的worker
 	workerId := request.Connection().ConnId() % m.WorkerPoolSize
 	log.Printf("Add ConnId=%d,request MsgId=%d,WorkerId=%d\n", request.Connection().ConnId(), request.MsgId(), workerId)
 	// 2、将消息发送给对应的worker的TaskQueue即可

@@ -18,7 +18,7 @@ func (p *PingRouter) Handle(req xifs.XRequest) {
 	// 先读取客户端数据，再回写ping...
 	log.Printf("Recv from clien:msgId=%d,data=%s\n", req.MsgId(), req.Data())
 
-	if err := req.Connection().SendMsg(req.MsgId(), []byte("XinV0.9 server ping...")); err != nil {
+	if err := req.Connection().SendMsg(req.MsgId(), []byte("XinV1.0 server ping...")); err != nil {
 		log.Println("send msg error:", err)
 	}
 }
@@ -34,7 +34,7 @@ func (h *HelloRouter) Handle(req xifs.XRequest) {
 	// 先读取客户端数据，再回写ping...
 	log.Printf("Recv from clien:msgId=%d,data=%s\n", req.MsgId(), req.Data())
 
-	if err := req.Connection().SendMsg(req.MsgId(), []byte("XinV0.9 server Hello...")); err != nil {
+	if err := req.Connection().SendMsg(req.MsgId(), []byte("XinV1.0 server Hello...")); err != nil {
 		log.Println("send msg error:", err)
 	}
 }

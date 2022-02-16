@@ -7,10 +7,9 @@
         "id": "ea9d56ba1b1622fd",
         "type": "leaf",
         "state": {
-          "type": "markdown",
+          "type": "mindmapView",
           "state": {
-            "file": "doc.md",
-            "mode": "source"
+            "file": "doc.md"
           }
         }
       }
