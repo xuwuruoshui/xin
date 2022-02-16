@@ -4,13 +4,12 @@
 
 Xin is a Golang-based TCP server framework
 
-## USAGE
-**Install**
+## Install
 ```go
 go get -u github.com/xuwuruoshui/xin
 ```
 
-
+## Usage
 ```go
 func main(){
     // 1、create xin server
