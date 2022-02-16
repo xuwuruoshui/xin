@@ -58,7 +58,7 @@ func (d *DataPack) Unpack(binaryData []byte) (xifs.XMessage, error) {
 	}
 
 	if config.GloabalConf.MaxPackageSize < 0 && msg.Length > config.GloabalConf.MaxPackageSize {
-		return nil, errors.New("too large msg data recived!!!")
+		return nil, errors.New("too large Msg data recived!!!")
 	}
 
 	return msg, nil

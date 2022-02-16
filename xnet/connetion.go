@@ -15,28 +15,28 @@ type Connection struct {
 	TcpServer xifs.XServer
 
 	// 当前连接的socket: TCP套接字
-	conn *net.TCPConn
+	Conn *net.TCPConn
 
 	// 链接的ID
-	connID uint32
+	ConnID uint32
 
 	// 当前的链接状态
-	isClosed bool
+	IsClosed bool
 
 	// 告知当前连接已经退出的/停止 channel
-	exitChan chan bool
+	ExitChan chan bool
 
 	// 用于Read、Write的channel(无缓冲)
-	msgChan chan []byte
+	MsgChan chan []byte
 
 	// 该链接处理的方法Router
-	msgHandler xifs.XMessageHandle
+	MsgHandler xifs.XMessageHandle
 
 	// 链接属性集合
-	property map[string]interface{}
+	Property map[string]interface{}
 
 	// 保护链接属性的锁
-	propertyLock sync.RWMutex
+	PropertyLock sync.RWMutex
 }
 
 // 初始化链接模块的方法
@@ -44,13 +44,13 @@ func NewConnetion(server xifs.XServer, conn *net.TCPConn, connID uint32, msgHand
 
 	c := &Connection{
 		TcpServer:  server,
-		conn:       conn,
-		connID:     connID,
-		msgHandler: msgHandler,
-		isClosed:   false,
-		msgChan:    make(chan []byte),
-		exitChan:   make(chan bool, 1),
-		property:   make(map[string]interface{}),
+		Conn:       conn,
+		ConnID:     connID,
+		MsgHandler: msgHandler,
+		IsClosed:   false,
+		MsgChan:    make(chan []byte),
+		ExitChan:   make(chan bool, 1),
+		Property:   make(map[string]interface{}),
 	}
 	// 将当前链接添加到链接管理器ConnectionManager
 	c.TcpServer.GetConnMgr().Add(c)
@@ -60,7 +60,7 @@ func NewConnetion(server xifs.XServer, conn *net.TCPConn, connID uint32, msgHand
 // 读业务
 func (c *Connection) StartReader() {
 	log.Println("[Reader Goroutine is running]...")
-	defer log.Printf("[Reader is exit,remote addr is %s],connID=%d\n", c.RemoteAddr().String(), c.connID)
+	defer log.Printf("[Reader is exit,remote addr is %s],ConnID=%d\n", c.RemoteAddr().String(), c.ConnID)
 	defer c.Stop()
 
 	for {
@@ -68,7 +68,7 @@ func (c *Connection) StartReader() {
 		datapack := NewDataPack()
 		headData := make([]byte, datapack.GetHeadLen())
 
-		if _, err := c.conn.Read(headData); err != nil {
+		if _, err := c.Conn.Read(headData); err != nil {
 			log.Println("read headLen error:", err)
 			break
 		}
@@ -81,24 +81,24 @@ func (c *Connection) StartReader() {
 
 		if msg.GetLength() > 0 {
 			msg.SetData(make([]byte, msg.GetLength()))
-			if _, err = c.conn.Read(msg.GetData()); err != nil {
+			if _, err = c.Conn.Read(msg.GetData()); err != nil {
 				log.Println("read Data error:", err)
 				break
 			}
 		}
 
 		req := Request{
-			conn: c,
-			msg:  msg,
+			Conn: c,
+			Msg:  msg,
 		}
 
 		if config.GloabalConf.WorkerPoolSize > 0 {
 			// 已经开启了工作池，将消息发送给工作池
-			c.msgHandler.SendMsgToTaskQueue(&req)
+			c.MsgHandler.SendMsgToTaskQueue(&req)
 
 		} else {
 			// 从路由中，找到注册绑定的Conn对应的router调用
-			go c.msgHandler.DoMsgHandle(&req)
+			go c.MsgHandler.DoMsgHandle(&req)
 		}
 
 	}
@@ -111,13 +111,13 @@ func (c *Connection) StartWrite() {
 
 	for {
 		select {
-		case data := <-c.msgChan:
+		case data := <-c.MsgChan:
 			// 有数据要写给客户端
-			if _, err := c.conn.Write(data); err != nil {
-				log.Printf("Send data error%s,conn writer exit!!!", err)
+			if _, err := c.Conn.Write(data); err != nil {
+				log.Printf("Send data error%s,Conn writer exit!!!", err)
 				return
 			}
-		case <-c.exitChan:
+		case <-c.ExitChan:
 			// Reader结束,Writer也退出
 			return
 
@@ -127,8 +127,8 @@ func (c *Connection) StartWrite() {
 
 // 发送数据到远程客户端
 func (c *Connection) SendMsg(msgId uint32, data []byte) error {
-	if c.isClosed {
-		return errors.New("Connection is closed when send msg !!!")
+	if c.IsClosed {
+		return errors.New("Connection is closed when send Msg !!!")
 	}
 	// 封包
 	msg := NewMessage(msgId, data)
@@ -141,13 +141,13 @@ func (c *Connection) SendMsg(msgId uint32, data []byte) error {
 	}
 
 	// 数据发送到channel
-	c.msgChan <- packData
+	c.MsgChan <- packData
 	return nil
 }
 
 // 启动链接 让当前的链接准备开始工作
 func (c *Connection) Start() {
-	log.Println("conn Start() ... connID=", c.connID)
+	log.Println("Conn Start() ... ConnID=", c.ConnID)
 	// 启动从当前链接
 	// TODO 启动从当前链接写数据的业务
 	go c.StartReader()
@@ -159,62 +159,57 @@ func (c *Connection) Start() {
 
 // 停止链接	结束当前连接的工作
 func (c *Connection) Stop() {
-	log.Println("conn Stop().. connID=", c.connID)
+	log.Println("Conn Stop().. ConnID=", c.ConnID)
 
 	// 如果当前连接已经关闭
-	if c.isClosed {
+	if c.IsClosed {
 		return
 	}
 
-	c.isClosed = true
+	c.IsClosed = true
 
 	// 调用开发者注册的Hook函数
 	c.TcpServer.CallOnConnStop(c)
 
 	// 关闭链接
-	c.conn.Close()
+	c.Conn.Close()
 
 	// 告知writer关闭
-	c.exitChan <- true
+	c.ExitChan <- true
 
 	// 将当前链接从Connection Manager中删除
 	c.TcpServer.GetConnMgr().Remove(c)
 	// 回收资源
-	close(c.exitChan)
-	close(c.msgChan)
-}
-
-// 获取当前链接的绑定 socket conn
-func (c *Connection) TCPConnetion() *net.TCPConn {
-	return c.conn
+	close(c.ExitChan)
+	close(c.MsgChan)
 }
 
 // 获取当前链接模块的链接ID
-func (c *Connection) ConnId() uint32 {
-	return c.connID
+func (c *Connection) GetConnId() uint32 {
+	return c.ConnID
 }
 
 // 获取远程客户端的TCP状态 IP port
 func (c *Connection) RemoteAddr() net.Addr {
-	return c.conn.RemoteAddr()
+	return c.Conn.RemoteAddr()
 }
 
 // 设置链接属性
 func (c *Connection) SetProperty(key string, value interface{}) {
-	c.propertyLock.Lock()
-	defer c.propertyLock.Unlock()
+	c.PropertyLock.Lock()
+	defer c.PropertyLock.Unlock()
 
 	// 添加一个链接属性
-	c.property[key] = value
+	c.Property[key] = value
 }
 
 // 获取链接属性
 func (c *Connection) GetProperty(key string) (interface{}, error) {
-	c.propertyLock.RLock()
-	defer c.propertyLock.RUnlock()
+	c.PropertyLock.RLock()
+	defer c.PropertyLock.RUnlock()
 
 	// 读取属性
-	if value, ok := c.property[key]; ok {
+	if value, ok := c.Property[key]; ok {
 		return value, nil
 	}
 	return nil, errors.New("Property not found!!!")
@@ -222,7 +217,7 @@ func (c *Connection) GetProperty(key string) (interface{}, error) {
 
 // 移除链接属性
 func (c *Connection) RemoveProperty(key string) {
-	c.propertyLock.Lock()
-	defer c.propertyLock.Unlock()
-	delete(c.property, key)
+	c.PropertyLock.Lock()
+	defer c.PropertyLock.Unlock()
+	delete(c.Property, key)
 }

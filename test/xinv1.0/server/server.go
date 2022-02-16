@@ -54,7 +54,7 @@ func afterConnection(conn xifs.XConnection) {
 // 销毁链接之前的钩子函数
 func beforeStop(conn xifs.XConnection) {
 	log.Println("BeforeStop is Called...")
-	log.Printf("conn Id=%d is Lost...", conn.ConnId())
+	log.Printf("conn Id=%d is Lost...", conn.GetConnId())
 
 	//获取链接属性
 	if name, err := conn.GetProperty("Name"); err == nil {

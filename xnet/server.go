@@ -19,7 +19,7 @@ type Server struct {
 	// 端口
 	Port int
 	// 当前的Server添加一个MessageHandler,用于msgId和router的绑定
-	msgHandler xifs.XMessageHandle
+	MsgHandler xifs.XMessageHandle
 	//连接管理器
 	ConnMgr xifs.XConnectionManager
 	// Server创建Connection之后自动调用Hook函数(OnConnStart)
@@ -36,7 +36,7 @@ func (s *Server) Start() {
 
 	go func() {
 		//0、开启消息队列及Worker工作池
-		s.msgHandler.StartWorkerPool()
+		s.MsgHandler.StartWorkerPool()
 
 		// 1、获取一个TCP的Address
 		addr, err := net.ResolveTCPAddr(s.IPVersion, fmt.Sprintf("%s:%d", s.IP, s.Port))
@@ -71,7 +71,7 @@ func (s *Server) Start() {
 				continue
 			}
 			// 将处理新连接的业务方法和conn进行绑定 得到我们的链接模块
-			dealConn := NewConnetion(s, conn, cid, s.msgHandler)
+			dealConn := NewConnetion(s, conn, cid, s.MsgHandler)
 			cid++
 
 			// 启动当前的链接业务处理
@@ -99,7 +99,7 @@ func (s *Server) Run() {
 }
 
 func (s *Server) AddRouter(msgId uint32, router xifs.XRouter) {
-	s.msgHandler.AddRouter(msgId, router)
+	s.MsgHandler.AddRouter(msgId, router)
 	log.Println("AddRouter Success!!!")
 }
 
@@ -109,7 +109,7 @@ func NewServer() xifs.XServer {
 		IPVersion:  "tcp4",
 		IP:         config.GloabalConf.Host,
 		Port:       config.GloabalConf.Port,
-		msgHandler: NewMsgHandle(),
+		MsgHandler: NewMsgHandle(),
 		ConnMgr:    NewConnectionManager()}
 }
 

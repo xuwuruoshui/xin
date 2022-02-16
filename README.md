@@ -40,6 +40,9 @@ func (h *HelloRouter) Handle(req xifs.XRequest) {
         log.Println("send msg error:", err)
     }
 }
+[example](https://github.com/xuwuruoshui/xin/tree/main/test/xinv1.0)
+open server,client,client2
+use `go run xxx.go`
 ```
 
 
