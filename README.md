@@ -45,17 +45,17 @@ client
 ```go
 func main() {
 
-	// 1.conn to server
+	// conn to server
 	conn, err := net.Dial("tcp", ":7777")
 	if err != nil {
 		log.Println("Client start error:", err)
 		return
 	}
-	// 2. write msg to server
+
 	for {
 		datapack := xnet.NewDataPack()
 
-		// 1.发送消息
+		// 1.send msg to server
 		msg := xnet.NewMessage(1, []byte("Xin V1.0 client Test message!!!"))
 		packData, err := datapack.Pack(msg)
 		if err != nil {
@@ -69,7 +69,7 @@ func main() {
 			break
 		}
 
-		//2. recv message
+		//2. recv msg
 		data := make([]byte, datapack.GetHeadLen())
 		if _, err := conn.Read(data); err != nil {
 			break
