@@ -1,6 +1,6 @@
 # Xin
 <hr>
-[![](https://img.shields.io/badge/LICENSE-GPL%203.0-blue "title")](https://github.com/xuwuruoshui/xin/blob/main/LICENSE)
+<a href="https://github.com/xuwuruoshui/xin/blob/main/LICENSE"><img src="https://img.shields.io/badge/LICENSE-GPL%203.0-blue"/></a>
 Xin is a Golang-based TCP server framework
 
 ## USAGE
