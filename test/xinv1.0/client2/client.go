@@ -52,6 +52,6 @@ func main() {
 			log.Println(msgRecv.GetId(), msgRecv.GetLength(), string(msgRecv.GetData()))
 		}
 
-		time.Sleep(time.Second)
+		time.Sleep(time.Second * 5)
 	}
 }
